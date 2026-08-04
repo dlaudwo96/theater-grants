@@ -12,6 +12,11 @@
   --status-upcoming: #3a5fa0;
   --status-ongoing: #7a4fa0;
   --status-closed: #8a8a8a;
+  --type-grant: #8a3324;
+  --type-audition: #b8860b;
+  --type-contest: #2f6b6b;
+  --type-workshop: #5a5a8a;
+  --new-badge: #d13b3b;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -103,23 +108,23 @@ body {
   font-size: 0.9rem;
 }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1rem;
-}
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 1.1rem;
+.list-board {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.1rem;
 }
 
-.card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.list-row {
+  border-bottom: 1px solid var(--border);
+  padding: 0.65rem 0.25rem;
+}
+
+.row-main {
+  display: flex;
+  align-items: baseline;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
 
 .tag {
   font-size: 0.72rem;
@@ -138,40 +143,34 @@ body {
 .tag.status-ongoing { background: var(--status-ongoing); }
 .tag.status-closed { background: var(--status-closed); }
 
-.card h2 { margin: 0; font-size: 1.05rem; }
+.tag.type-grant { background: var(--type-grant); }
+.tag.type-audition { background: var(--type-audition); }
+.tag.type-contest { background: var(--type-contest); }
+.tag.type-workshop { background: var(--type-workshop); }
 
-.card .org { color: var(--muted); font-size: 0.85rem; }
-
-.card dl {
-  margin: 0.3rem 0 0;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 0.25rem 0.6rem;
-  font-size: 0.85rem;
-}
-
-.card dt { color: var(--muted); }
-.card dd { margin: 0; }
-
-.card .links {
-  margin-top: auto;
-  display: flex;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-  padding-top: 0.5rem;
-}
-
-.card .links a {
-  font-size: 0.85rem;
-  color: var(--accent);
+.row-title {
+  color: var(--text);
   text-decoration: none;
-  font-weight: 600;
+  font-size: 0.95rem;
 }
 
-.card .note {
-  font-size: 0.78rem;
+.row-title:hover { text-decoration: underline; }
+
+.row-org { color: var(--accent); font-weight: 600; }
+
+.row-deadline { color: var(--muted); font-size: 0.88rem; }
+
+.new-badge {
+  color: var(--new-badge);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.row-summary {
+  margin: 0.2rem 0 0;
+  padding-left: 0.1rem;
   color: var(--muted);
-  font-style: italic;
+  font-size: 0.82rem;
 }
 
 .empty-state {

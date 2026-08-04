@@ -23,6 +23,13 @@
         <button class="filter-btn" data-filter="지역문화재단">지역문화재단</button>
         <button class="filter-btn" data-filter="민간/기업">민간/기업</button>
       </div>
+      <div class="filter-group" id="typeFilters">
+        <button class="filter-btn active" data-type="전체">전체 유형</button>
+        <button class="filter-btn" data-type="지원사업">지원사업</button>
+        <button class="filter-btn" data-type="오디션/캐스팅">오디션/캐스팅</button>
+        <button class="filter-btn" data-type="공모전">공모전</button>
+        <button class="filter-btn" data-type="워크숍/교육">워크숍/교육</button>
+      </div>
       <select id="regionFilter" class="region-select">
         <option value="전체">전체 지역</option>
       </select>
@@ -36,7 +43,7 @@
       <input type="search" id="searchInput" placeholder="사업명 또는 주관기관 검색" class="search-input">
     </section>
 
-    <section id="cardGrid" class="card-grid"></section>
+    <section id="listBoard" class="list-board"></section>
     <p id="emptyState" class="empty-state" hidden>조건에 맞는 지원사업이 없습니다.</p>
     <p id="loadError" class="empty-state" hidden>
       데이터를 불러오지 못했습니다. file:// 로 직접 열었다면 로컬 서버로 실행해 주세요<br>

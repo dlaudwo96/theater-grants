@@ -11,10 +11,18 @@ const STATUS_CLASS = {
   "마감": "status-closed",
 };
 
+const TYPE_CLASS = {
+  "지원사업": "type-grant",
+  "오디션/캐스팅": "type-audition",
+  "공모전": "type-contest",
+  "워크숍/교육": "type-workshop",
+};
+
 let allPrograms = [];
 let currentCategory = "전체";
 let currentStatus = "전체";
 let currentRegion = "전체";
+let currentType = "전체";
 let currentQuery = "";
 
 function computeStatus(p) {
@@ -35,15 +43,31 @@ function statusSortKey(p, status) {
   return p["신청기간_마감"] || p["신청기간_시작"] || "9999-99-99";
 }
 
+function formatDeadline(p) {
+  if (p["신청기간_마감"]) return "~" + p["신청기간_마감"].slice(5).replace("-", ".");
+  if (p["원문상태"]) return p["원문상태"];
+  return computeStatus(p) === "상시" ? "상시" : "미정";
+}
+
+function isNew(p) {
+  if (!p["최종확인일"]) return false;
+  const confirmed = new Date(p["최종확인일"]);
+  const today = new Date(new Date().toISOString().slice(0, 10));
+  const diffDays = (today - confirmed) / (1000 * 60 * 60 * 24);
+  return diffDays >= 0 && diffDays <= 3;
+}
+
 function render() {
-  const grid = document.getElementById("cardGrid");
+  const board = document.getElementById("listBoard");
   const empty = document.getElementById("emptyState");
   const q = currentQuery.trim().toLowerCase();
 
   let filtered = allPrograms.filter((p) => {
     const status = computeStatus(p);
+    const type = p["유형"] || "지원사업";
     if (currentCategory !== "전체" && p["카테고리"] !== currentCategory) return false;
     if (currentStatus !== "전체" && status !== currentStatus) return false;
+    if (currentType !== "전체" && type !== currentType) return false;
     if (currentRegion !== "전체") {
       if (currentRegion === "전국") {
         if (p["지역"] !== null) return false;
@@ -66,38 +90,32 @@ function render() {
     return statusSortKey(a, sa).localeCompare(statusSortKey(b, sb));
   });
 
-  grid.innerHTML = "";
+  board.innerHTML = "";
   empty.hidden = filtered.length !== 0;
 
   for (const p of filtered) {
     const status = computeStatus(p);
-    const card = document.createElement("article");
-    card.className = "card";
+    const type = p["유형"] || "지원사업";
+    const row = document.createElement("article");
+    row.className = "list-row";
 
-    const period = p["신청기간_시작"] && p["신청기간_마감"]
-      ? `${p["신청기간_시작"]} ~ ${p["신청기간_마감"]}`
-      : (p["원문상태"] || "미정");
+    const summary = p["지원내용"] || p["지원대상"] || p["비고"] || "";
 
-    card.innerHTML = `
-      <div class="card-tags">
-        <span class="tag ${CATEGORY_CLASS[p["카테고리"]] || ""}">${p["카테고리"] || ""}</span>
+    row.innerHTML = `
+      <div class="row-main">
+        <span class="tag ${TYPE_CLASS[type] || ""}">${escapeHtml(type)}</span>
+        <span class="tag ${CATEGORY_CLASS[p["카테고리"]] || ""}">${escapeHtml(p["카테고리"] || "")}</span>
         <span class="tag ${STATUS_CLASS[status] || ""}">${status}</span>
+        <a class="row-title" href="${escapeAttr(p["원본공고링크"] || "#")}" target="_blank" rel="noopener">
+          <span class="row-org">[${escapeHtml(p["주관기관"] || "")}]</span>
+          ${escapeHtml(p["사업명"] || "")}
+          <span class="row-deadline">(${escapeHtml(formatDeadline(p))})</span>
+        </a>
+        ${isNew(p) ? '<span class="new-badge">NEW</span>' : ""}
       </div>
-      <h2>${escapeHtml(p["사업명"] || "")}</h2>
-      <p class="org">${escapeHtml(p["주관기관"] || "")}${p["지역"] ? " · " + escapeHtml(p["지역"]) : ""}</p>
-      <dl>
-        <dt>지원대상</dt><dd>${escapeHtml(p["지원대상"] || "-")}</dd>
-        <dt>지원내용</dt><dd>${escapeHtml(p["지원내용"] || "-")}</dd>
-        <dt>신청기간</dt><dd>${escapeHtml(period)}</dd>
-        <dt>신청방법</dt><dd>${escapeHtml(p["신청방법"] || "-")}</dd>
-      </dl>
-      ${p["비고"] ? `<p class="note">${escapeHtml(p["비고"])}</p>` : ""}
-      <div class="links">
-        ${p["원본공고링크"] ? `<a href="${escapeAttr(p["원본공고링크"])}" target="_blank" rel="noopener">원본 공고</a>` : ""}
-        ${p["신청링크"] ? `<a href="${escapeAttr(p["신청링크"])}" target="_blank" rel="noopener">신청하기</a>` : ""}
-      </div>
+      ${summary ? `<p class="row-summary">${p["지역"] ? `[${escapeHtml(p["지역"])}] ` : ""}${escapeHtml(summary)}</p>` : ""}
     `;
-    grid.appendChild(card);
+    board.appendChild(row);
   }
 }
 
@@ -132,6 +150,15 @@ function setupControls() {
       document.querySelectorAll("#categoryFilters .filter-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       currentCategory = btn.dataset.filter;
+      render();
+    });
+  });
+
+  document.querySelectorAll("#typeFilters .filter-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("#typeFilters .filter-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentType = btn.dataset.type;
       render();
     });
   });
