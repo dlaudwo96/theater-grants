@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>연극공연지원사업 정보</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <h1>연극공연지원사업 정보</h1>
+      <p class="subtitle">중앙정부·지역문화재단·민간재단의 연극 지원사업을 한곳에서 확인하세요</p>
+      <p class="last-updated" id="lastUpdated">최종 업데이트: 확인 중...</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <section class="controls">
+      <div class="filter-group" id="categoryFilters">
+        <button class="filter-btn active" data-filter="전체">전체</button>
+        <button class="filter-btn" data-filter="중앙정부/공공기관">중앙정부/공공기관</button>
+        <button class="filter-btn" data-filter="지역문화재단">지역문화재단</button>
+        <button class="filter-btn" data-filter="민간/기업">민간/기업</button>
+      </div>
+      <div class="filter-group" id="statusFilters">
+        <button class="status-btn active" data-status="전체">전체 상태</button>
+        <button class="status-btn" data-status="모집중">모집중</button>
+        <button class="status-btn" data-status="예정">예정</button>
+        <button class="status-btn" data-status="상시">상시</button>
+        <button class="status-btn" data-status="마감">마감</button>
+      </div>
+      <input type="search" id="searchInput" placeholder="사업명 또는 주관기관 검색" class="search-input">
+    </section>
+
+    <section id="cardGrid" class="card-grid"></section>
+    <p id="emptyState" class="empty-state" hidden>조건에 맞는 지원사업이 없습니다.</p>
+    <p id="loadError" class="empty-state" hidden>
+      데이터를 불러오지 못했습니다. file:// 로 직접 열었다면 로컬 서버로 실행해 주세요<br>
+      (예: <code>python -m http.server 8000</code> 후 <code>localhost:8000</code> 접속)
+    </p>
+  </main>
+
+  <footer class="site-footer">
+    <p>본 사이트의 정보는 AI 자동 검색으로 수집되며 매일 갱신됩니다. 신청 전 반드시 원본 공고를 확인하세요.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
