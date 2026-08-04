@@ -83,6 +83,16 @@ body {
   border-color: var(--accent);
 }
 
+.region-select {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
 .search-input {
   flex: 1 1 220px;
   padding: 0.5rem 0.9rem;

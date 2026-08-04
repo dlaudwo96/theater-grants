@@ -14,6 +14,7 @@ const STATUS_CLASS = {
 let allPrograms = [];
 let currentCategory = "전체";
 let currentStatus = "전체";
+let currentRegion = "전체";
 let currentQuery = "";
 
 function computeStatus(p) {
@@ -43,6 +44,13 @@ function render() {
     const status = computeStatus(p);
     if (currentCategory !== "전체" && p["카테고리"] !== currentCategory) return false;
     if (currentStatus !== "전체" && status !== currentStatus) return false;
+    if (currentRegion !== "전체") {
+      if (currentRegion === "전국") {
+        if (p["지역"] !== null) return false;
+      } else if (p["지역"] !== currentRegion) {
+        return false;
+      }
+    }
     if (q) {
       const haystack = `${p["사업명"]} ${p["주관기관"]}`.toLowerCase();
       if (!haystack.includes(q)) return false;
@@ -103,6 +111,21 @@ function escapeAttr(str) {
   return escapeHtml(str);
 }
 
+function populateRegionFilter() {
+  const select = document.getElementById("regionFilter");
+  const regions = [...new Set(allPrograms.map((p) => p["지역"]).filter((r) => r))].sort((a, b) =>
+    a.localeCompare(b, "ko")
+  );
+  const hasNationwide = allPrograms.some((p) => p["지역"] === null);
+
+  const options = ['<option value="전체">전체 지역</option>'];
+  if (hasNationwide) options.push('<option value="전국">전국</option>');
+  for (const region of regions) {
+    options.push(`<option value="${escapeAttr(region)}">${escapeHtml(region)}</option>`);
+  }
+  select.innerHTML = options.join("");
+}
+
 function setupControls() {
   document.querySelectorAll("#categoryFilters .filter-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -126,6 +149,11 @@ function setupControls() {
     currentQuery = e.target.value;
     render();
   });
+
+  document.getElementById("regionFilter").addEventListener("change", (e) => {
+    currentRegion = e.target.value;
+    render();
+  });
 }
 
 async function init() {
@@ -137,6 +165,7 @@ async function init() {
     allPrograms = data.programs || [];
     const updated = data.last_updated ? data.last_updated.slice(0, 10) : "-";
     document.getElementById("lastUpdated").textContent = `최종 업데이트: ${updated}`;
+    populateRegionFilter();
     render();
   } catch (err) {
     document.getElementById("loadError").hidden = false;
