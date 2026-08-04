@@ -17,7 +17,9 @@ let currentStatus = "전체";
 let currentQuery = "";
 
 function computeStatus(p) {
-  if (p["원문상태"] === "상시모집" || p["원문상태"] === "상시") return "상시";
+  const state = p["원문상태"] || "";
+  if (state.includes("마감") || state.includes("종료") || state.includes("완료")) return "마감";
+  if (state.includes("상시") || state.includes("추천제")) return "상시";
   const today = new Date().toISOString().slice(0, 10);
   const start = p["신청기간_시작"];
   const end = p["신청기간_마감"];
